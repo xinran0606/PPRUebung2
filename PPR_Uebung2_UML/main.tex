@@ -1,0 +1,204 @@
+\documentclass[a2paper,4pt]{article}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage[utf8x]{inputenc}
+\usepackage[french]{babel}
+\usepackage{fullpage}
+
+\usepackage{tikz-uml}
+
+\sloppy
+\hyphenpenalty 10000000
+
+\begin{document}
+\begin{center}
+
+\section{Class Diagram}
+\resizebox{1\textwidth}{!}{ 
+\begin{tikzpicture}
+\begin{umlpackage}{SitzungsPackage}
+\umlclass[x = -5]{Person}{
+  int idNummer \\ 
+  String name \\
+  String vorname \\
+  String geburtsdatum \\
+  String gechlecht
+ }{ setter und getter() }
+
+\umlclass[x = -5, y = -5]{Abgeordnete}{
+  List<Integer> wahlperiode\\
+  Fraktion fraktion \\
+  String funktionen
+ }{ setter und getter() }
+
+\umlclass[x = -5, y = - 9]{Fraktion}{
+  String name
+ }{ setter und getter() }
+
+\umlclass[x = 0]{Sitzung}{
+  String sitzungsId \\
+  String datum \\
+  List<String> tagesordnungsid \\
+  List<String> reden
+ }{ setter und getter() }
+
+\umlclass[x = 2, y = -5]{Reden}{
+  String redenID \\
+  Integer rednerNummer \\
+  String inhalt \\
+  List<String> kommentare
+ }{ setter und getter() }
+
+\umlclass[x = 7]{Tagesordnung}{
+  String tagesordnungName \\
+  List<String> rede
+ }{ setter und getter() }
+
+\umlclass[x = 7, y = -5]{Tagesordnungspunkt}{
+  String tagesordnungpunktId
+ }{ setter und getter() }
+\end{umlpackage}
+
+\umlinherit[geometry=-|]{Abgeordnete}{Person}
+\umlassoc[geometry=|-|, mult1=1, mult2=0..*]{Fraktion}{Abgeordnete}
+\umlassoc[geometry=|-|, mult1=1, mult2=0..*]{Tagesordnung}{Reden}
+\umlassoc[geometry=|-|, mult1=1, mult2=0..*]{Sitzung}{Tagesordnung}
+\umlassoc[geometry=|-|, mult1=1, mult2=0..*]{Tagesordnung}{Tagesordnungspunkt}
+\umlassoc[geometry=|-|, mult1=1, mult2=0..*]{Sitzung}{Abgeordnete}
+
+\umlclass[x = -22, y = -5]{SystemFactory}{
+  Map<Integer, Abgeordnete> abgeordneteMap \\
+  Map<String, Sitzung> sitzungMap \\
+  Map<String, Reden> redenMap \\
+  Map<String, Tagesordnung> tagesordnungMap
+ }
+ {createAbgeordnete() \\
+ getAbgeordnete() \\
+ deleteAbgeordnete()\\ 
+ addAbgeordnete() \\
+ getAbgeordneteName()\\ 
+ getAbgeordneteVorname()\\ 
+ getAbgeordneteGeburtsdatum()\\ 
+ getAbgeordneteGeschlecht() \\
+ getAbgeordneteWahlperiode() \\
+ updateAbgeordneteWahlperiode() \\
+ getAbgeordneteFraktion() \\
+ updateAbgeordneteFraktion()\\ 
+ getAbgeordneteFunktion() \\
+ updateAbgeordneteFunktion()\\ 
+ getAllAbgeordnete() \\
+ createSitzung()\\
+ getSitzung()\\
+ deleteSitzung()\\
+ addSitzung()\\
+ getSitzungstermin()\\
+ addSitzungstermin()\\
+ getSitzungReden()\\
+ addSitzungReden()\\
+ getAllSitzungen()\\
+ createReden()\\
+ getReden()\\
+ getTednerNummer()\\
+ getRedenInhalt()\\
+ getRedenKOmmentare()\\
+ updateRedenInhalt()\\
+ updateRedenKommentare()\\
+ createTagesordnung()\\
+ getTagesordnungRede()\\
+ updateTagesordnungRede()
+ }
+
+\umlunicompo[geometry=-|, stereo=verwalten]{SystemFactory}{SitzungsPackage}
+
+\begin{umlpackage}{Parser}
+\umlclass[x = 18, y = -15]{AbgeordneteParser}{}{ abgeo_einlesen_xml() }
+\umlclass[x = 23, y = -15]{RedeParser}{}{ reden_durchfuehren() }
+\end{umlpackage}
+
+\begin{umlpackage}{database}
+\umlclass[x=6, y= -18]{MongoDBHandler}{AbgeordneteParser abgeo_parser \\
+RedeParser rede_parser \\
+MongoClient mongoClient \\
+MongoDatabase database \\
+MongoCollection<Document> collection \\
+MongoDBHandler hello \\
+PortfolioGenerator portfolioGenerator}{
+main() \\
+MongoDBHandler()\\
+setPortfolioGenerator()\\
+Abgeo_insert_to_db()\\
+sitzung_insert_to_db() \\
+tagesordnung_insert_to_db() \\
+rede_insert_to_db() \\
+connectMongoDb() \\
+insert_One_or_Many() \\
+collection_Entleerung() \\
+delete_one_or_many() \\
+create_collection() \\
+collection_check() \\
+lesen_collection() \\
+countDocuments() \\
+update_document_bitte() \\
+aggregiere_bitte() \\
+loadAbgeordnete() \\
+loadRedenByAbgeordneter() \\
+runApplication()
+}
+\end{umlpackage}
+
+\umlunicompo[geometry=-|, stereo=verwendet um Datenbank zu verbinden und Sachen hochzuladen]{database}{Parser}
+
+\begin{umlpackage}{PortfolioGenerator}
+\umlclass[x = -10, y = -18]{PortfolioGenerator}
+{
+MongoDBHandler dbHandler
+}
+{
+PortfolioGenerator()\\
+setMongoDBHandler()\\
+getAllAbgeordnete()\\
+getRedenByAbgeordneter()\\
+generatePortfolioForAbgeordneter()\\
+generateNavigationPage()
+}
+\end{umlpackage}
+    
+\umlunicompo[geometry=-|, stereo=Daten erhalten und HTML-Seite zu erstellen]{PortfolioGenerator}{database}
+
+\begin{umlpackage}{JavaInterface}
+\umlclass[x = -22, y = -15]{AbgeordneteInterface}{}{setter und getter()}
+\umlclass[x = -22, y = -17]{RedeInterface}{}{setter und getter()}
+\umlclass[x = -22, y = -19]{SitzungInterface}{}{setter und getter()}
+\umlclass[x = -22, y = -21]{TagesordnungInterface }{}{setter und getter()}
+\end{umlpackage}
+
+\begin{umlpackage}{KlassenImpl}
+\umlclass[x=-5, y=-23]{AbgeordneteFileImpl}{Genau wie SitzungPackage}{setter und getter()}
+\umlclass[x=-5, y=-26]{RedenFileImpl}{Genau wie SitzungPackage}{setter und getter()}
+\umlclass[x=-5, y=-29]{SitzungFileImpl}{Genau wie SitzungPackage}{setter und getter()}
+\umlclass[x=-5, y=-32 ]{TagesordnungFileImpl}{Genau wie SitzungPackage}{setter und getter()}
+\end{umlpackage}
+
+\umlunicompo[geometry=-|, stereo=implementieren]{KlassenImpl}{JavaInterface}
+
+\begin{umlpackage}{MongoDBklassen}
+\umlclass[x=-11, y=-32]{AbgeordneteMongoDBImpl}{Document abgeo_from_Database}{Setter und Getter()}
+\umlclass[x=-11, y=-35]{RedenMongoDBImpl}{Document rede_from_Database}{Setter und Getter()}
+\umlclass[x=-11, y= -38]{SitzungMongoDBImpl}{Document sitzung_from_Database}{Setter und Getter()}
+\umlclass[x=-11, y=-41]{TagesordnungMongoDBImpl}{Document tagesord_from_Database}{Setter und Getter()}
+\end{umlpackage}
+
+\umlunicompo[geometry=-|, stereo=implementieren]{MongoDBklassen}{JavaInterface}
+
+\begin{umlpackage}{exception}
+\umlclass[x=6, y=-30]{alleexceptions}{}{alleexceptions()}
+\umlclass[x=6, y=-32]{kollektionNichtGefunden}{}{kollektionNichtGefunden()}
+\end{umlpackage}
+
+\umlunicompo[geometry=-|, stereo=benötigt]{MongoDBHandler}{exception}
+
+\end{tikzpicture}
+}
+\end{center}
+
+\end{document}

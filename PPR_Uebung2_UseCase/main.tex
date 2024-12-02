@@ -1,0 +1,41 @@
+\documentclass[a3paper,11pt]{article}
+\usepackage{tikz}
+\usepackage{tikz-uml}
+
+\begin{document}
+
+\section*{Use-Case-Diagramm}
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}
+% Akteure
+\umlactor[x=-10, y=8]{Admin}
+\umlactor[x=-10, y=0]{Gäste}
+
+% Anwendungsfälle
+\umlusecase[x= -2, y=10]{Alle Abgeordnete erfassen}
+\umlusecase[x= -2,y=8]{Fraktion/Gruppe von Bundestag ermitteln}
+\umlusecase[x= -2,y=6]{Abgeordnete zuordnen}
+\umlusecase[x= -2,y=4]{Sitzungen erfassen}
+\umlusecase[x=2, y=2]{Kommentare und Zwischenrufe erfassen}
+\umlusecase[x=5, y=0]{Alle Daten in einer Datenbank speichern}
+\umlusecase[x=7, y=-2]{Die statische HTML-Seiten erzeugen}
+\umlusecase[x=6, y=6.5]{Tagesordnung}
+\umlusecase[x=6, y=4.5]{Rede der einzelnen Redner}
+
+\umlassoc{Admin}{Alle Abgeordnete erfassen}
+\umlassoc{Admin}{Fraktion/Gruppe von Bundestag ermitteln}
+\umlassoc{Admin}{Abgeordnete zuordnen}
+\umlassoc{Admin}{Sitzungen erfassen}
+\umlassoc{Admin}{Kommentare und Zwischenrufe erfassen}
+\umlassoc{Admin}{Alle Daten in einer Datenbank speichern}
+\umlassoc{Admin}{Die statische HTML-Seiten aus Datenbank erzeugen}
+
+\umlassoc{Gäste}{Tagesordnung}
+\umlassoc{Gäste}{Rede der einzelnen Redner}
+
+\umlinclude{Sitzungen erfassen}{Tagesordnung}
+\umlinclude{Sitzungen erfassen}{Rede der einzelnen Redner}
+
+\end{tikzpicture}
+}
+\end{document}
